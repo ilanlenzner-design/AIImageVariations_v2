@@ -133,3 +133,30 @@ If you find this project useful, please consider giving it a star on GitHub!
 ---
 
 **Note**: You'll need your own Gemini API key to use this application. Get one for free at [Google AI Studio](https://makersuite.google.com/app/apikey).
+
+## 🎬 After Effects Integration
+
+This app can now be installed as an Adobe After Effects extension!
+
+### Installation
+
+1. **Copy the folder** to your Adobe extensions directory:
+   - **Mac**: `/Library/Application Support/Adobe/CEP/extensions/`
+   - **Windows**: `C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\`
+
+2. **Enable Debug Mode** (required for unsigned extensions):
+   - **Mac**: Open Terminal and run:
+     ```bash
+     defaults write com.adobe.CSXS.11 PlayerDebugMode 1
+     ```
+   - **Windows**: Open Registry Editor (`regedit`), go to `HKEY_CURRENT_USER\Software\Adobe\CSXS.11`, and add a String value named `PlayerDebugMode` with value `1`.
+
+3. **Restart After Effects**
+
+4. **Open the Panel**:
+   - Go to **Window** > **Extensions** > **AI Image Variations**
+
+### Features in After Effects
+- 📥 **Import to AE**: New button appears on variation cards
+- 📁 **Auto-Import**: Automatically saves the image and imports it into your project
+- 🎞️ **Comp Integration**: Adds the image to your active composition if one is open
