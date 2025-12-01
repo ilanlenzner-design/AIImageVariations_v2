@@ -419,7 +419,71 @@ function displayVariations() {
         });
     });
 
+    // Add Import to AE buttons if running in CEP
+    if (window.__adobe_cep__) {
+        document.querySelectorAll('.variation-image-container').forEach((container, index) => {
+            const importBtn = document.createElement('button');
+            importBtn.className = 'import-ae-btn';
+            importBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 3V15M12 15L7 10M12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Import to AE</span>
+            `;
+            importBtn.title = "Import to After Effects";
+            importBtn.onclick = (e) => {
+                e.stopPropagation();
+                importToAE(index);
+            };
+            container.appendChild(importBtn);
+        });
+    }
+
     elements.variationsSection.style.display = 'block';
+}
+
+// Import to After Effects (CEP only)
+async function importToAE(index) {
+    if (!window.__adobe_cep__) return;
+
+    const variation = state.variations[index];
+    const csInterface = new CSInterface();
+
+    // Use Node.js to save file locally first
+    const fs = require('fs');
+    const path = require('path');
+    const os = require('os');
+
+    // Create temp path
+    const tempDir = os.tmpdir();
+    const fileName = `${variation.name.replace(/\s+/g, '_').toLowerCase()}_${Date.now()}.png`;
+    const filePath = path.join(tempDir, fileName);
+
+    // Remove data URL prefix to get raw base64
+    const base64Data = variation.imageData.replace(/^data:image\/\w+;base64,/, "");
+
+    try {
+        // Write file
+        fs.writeFileSync(filePath, base64Data, 'base64');
+
+        // Call ExtendScript to import
+        // We need to escape backslashes for Windows paths in ExtendScript
+        const escapedPath = filePath.replace(/\\/g, "\\\\");
+
+        csInterface.evalScript(`downloadAndImportImage('${escapedPath}', '${variation.name}')`, (result) => {
+            const res = JSON.parse(result);
+            if (res.status === 'success') {
+                alert('Image imported to After Effects!');
+            } else {
+                alert('Failed to import: ' + res.message);
+            }
+        });
+
+    } catch (err) {
+        console.error('Error saving file for AE import:', err);
+        alert('Error saving file: ' + err.message);
+    }
 }
 
 // Download variation image
