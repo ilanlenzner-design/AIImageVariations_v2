@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ExtensionList>
-    <Extension Id="com.ilanlenzner.imagevariations.panel">
+    <Extension Id="com.ilanlenzner.aiImageVariations">
         <HostList>
-            <Host Name="PHXS" Port="8088"/>
-            <Host Name="AEFT" Port="8089"/>
-            <Host Name="PPRO" Port="8090"/>
+            <Host Name="AEFT" Port="8088"/>
         </HostList>
     </Extension>
 </ExtensionList>
